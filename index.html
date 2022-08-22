@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Leaky memory iframe</title>
+  </head>
+  <body>
+    <p>This is a repro of a memory leak contained in an iframe.</p>
+    <p>
+      <button onclick="doRepro()">Create and append iframe</button>
+      <button onclick="closeIframe()">Close iframe</button>
+    </p>
+    <div id="frameHost">
+    </div>
+    <script>
+
+      function doRepro() {
+        if (document.querySelector('iframe')) {
+          alert('There is already an iframe attached. Close it first.');
+          return;
+        }
+
+        const iframe = document.createElement('iframe');
+        iframe.src = './iframe.html';
+        iframe.width = 400;
+        iframe.height = 300;
+
+        document.querySelector('#frameHost').appendChild(iframe);
+      }
+
+      function closeIframe() {
+        const frameHost = document.querySelector('#frameHost');
+        while (frameHost.childNodes.length) {
+          frameHost.childNodes[0].parentNode.removeChild(frameHost.childNodes[0]);
+        }
+      }
+    </script>
+  </body>
+</html>
